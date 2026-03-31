@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevMaster Pro | Plataforma de Algoritmos</title>
+    
+    <style>
+        :root {
+            --primary: #2ea043;
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --gold: #d4af37;
+        }
+
+        [data-theme="dracula"] { --primary: #bd93f9; --bg: #282a36; --card-bg: #44475a; --border: #6272a4; --text: #f8f8f2; }
+        [data-theme="matrix"] { --primary: #00ff41; --bg: #000000; --card-bg: #0d0d0d; --border: #00ff41; --text: #00ff41; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fira Code', monospace; }
+        body { background-color: #0d1117; color: var(--text); min-height: 100vh; }
+
+        /* TELA DE LOGIN - AGORA COM PRIORIDADE MÁXIMA */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #0d1117; z-index: 10000; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .auth-card {
+            background: #161b22; padding: 40px; border-radius: 16px; 
+            border: 2px solid #2ea043; width: 90%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .auth-card input {
+            width: 100%; padding: 12px; margin: 10px 0; background: #0d1117;
+            border: 1px solid #30363d; color: white; border-radius: 8px; outline: none;
+        }
+
+        /* ELEMENTOS ESCONDIDOS INICIALMENTE */
+        header, main, #pomodoro { display: none !important; }
+
+        /* HEADER APÓS LOGIN */
+        header.logged-in {
+            display: block !important; padding: 15px 5%; background: var(--card-bg); 
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 2px solid var(--primary);
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+
+        /* CONTEÚDO */
+        main.logged-in { display: block !important; padding: 140px 5% 40px; max-width: 1300px; margin: 0 auto; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .card-body { padding: 15px; }
+        .notes-area { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; margin: 10px 0; min-height: 70px; }
+
+        /* BOTÕES */
+        .btn { padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; border: none; width: 100%; }
+        .btn-check { background: var(--primary); color: #000; }
+        .btn-done { background: #30363d; color: #fff; }
+
+        /* CERTIFICADO */
+        #cert-area { display: none; text-align: center; padding: 40px; background: #fff; color: #000; border: 15px double var(--gold); margin-top: 40px; }
+
+        /* POMODORO */
+        #pomodoro.logged-in { display: block !important; position: fixed; bottom: 20px; right: 20px; background: var(--card-bg); border: 1px solid var(--primary); padding: 10px; border-radius: 8px; z-index: 500; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h2 style="color: #2ea043; margin-bottom: 20px;">&lt; DevMaster Pro /&gt;</h2>
+            <input type="text" id="login-nome" placeholder="Teu Nome Completo">
+            <input type="email" id="login-email" placeholder="Teu Melhor E-mail">
+            <button class="btn btn-check" onclick="entrarPlataforma()">ENTRAR NA PLATAFORMA</button>
+            <p id="erro" style="color: #ff5555; font-size: 11px; margin-top: 10px; display: none;">Preencha o nome e um e-mail válido!</p>
+        </div>
+    </div>
+
+    <header id="main-header">
+        <div class="header-top">
+            <div id="user-info" style="font-size: 12px;"></div>
+            <select onchange="document.documentElement.setAttribute('data-theme', this.value)" style="background:#000; color:#fff; border:1px solid var(--primary);">
+                <option value="default">GitHub Dark</option>
+                <option value="dracula">Dracula</option>
+                <option value="matrix">Matrix</option>
+            </select>
+            <div id="prog-text">0 / 15</div>
+        </div>
+        <div style="width:100%; height:4px; background:#333; margin-top: 10px;"><div id="bar" style="width:0%; height:100%; background:var(--primary); transition:0.5s;"></div></div>
+    </header>
+
+    <main id="app-content">
+        <div class="video-grid" id="grid"></div>
+
+        <div id="cert-area">
+            <h1 style="font-size: 40px;">CERTIFICADO</h1>
+            <p>Concluído com sucesso por:</p>
+            <h2 id="cert-nome" style="font-size: 30px; color: #2ea043; margin: 20px 0;"></h2>
+            <p>Curso de Algoritmos e Lógica de Programação - 15 Aulas</p>
+            <p style="margin-top: 20px;" id="cert-data"></p>
+            <button class="btn" style="background: var(--gold); margin-top: 20px; width: auto; padding: 10px 30px;" onclick="window.print()">IMPRIMIR PDF</button>
+        </div>
+
+        <center><button class="btn" style="background:#58a6ff; color:#fff; margin-top: 30px; max-width: 300px;" onclick="exportar()">EXPORTAR NOTAS (.TXT)</button></center>
+    </main>
+
+    <div id="pomodoro">
+        <div id="timer" style="font-weight:bold; color:var(--primary);">25:00</div>
+        <button onclick="startT()" style="font-size:9px; cursor:pointer;">Start</button>
+    </div>
+
+    <script>
+        const aulas = [
+            { id: "8mei6uVttho", t: "01. Introdução" }, { id: "M2Af7gkbbro", t: "02. O que é Algoritmo?" },
+            { id: "U57I7EJHMMY", t: "03. Primeiro Algoritmo" }, { id: "RDrfZ-7WE8c", t: "04. Operadores Aritméticos" },
+            { id: "Vv88A6_nssE", t: "05. Intro ao Visualg" }, { id: "Z0p98KAsf-A", t: "06. Exercícios In/Out" },
+            { id: "Ig4Qp0U6pI4", t: "07. Op. Relacionais" }, { id: "v2n_J7atS-s", t: "08. Op. Lógicos" },
+            { id: "GrS97L6SwwY", t: "09. Estruturas Condicionais 1" }, { id: "_gM9T0Wos-w", t: "10. Estruturas Condicionais 2" },
+            { id: "U5vHeVGuV0E", t: "11. Estruturas de Repetição 1" }, { id: "fP49L1idq_0", t: "12. Estruturas de Repetição 2" },
+            { id: "W5_p996Wv_M", t: "13. Estruturas de Repetição 3" }, { id: "Bc8S_o_m-0E", t: "14. Procedimentos e Funções" },
+            { id: "j9m_5X1X6M0", t: "15. Vetores e Matrizes (Final)" }
+        ];
+
+        let prog = JSON.parse(localStorage.getItem('p_save')) || [];
+        let notas = JSON.parse(localStorage.getItem('n_save')) || {};
+        let user = { nome: "", email: "" };
+
+        function entrarPlataforma() {
+            const n = document.getElementById('login-nome').value;
+            const e = document.getElementById('login-email').value;
+
+            if (n.length > 2 && e.includes('@')) {
+                user = { nome: n, email: e };
+                document.getElementById('auth-screen').style.display = 'none';
+                
+                // Mostrar os elementos adicionando a classe
+                document.getElementById('main-header').classList.add('logged-in');
+                document.getElementById('app-content').classList.add('logged-in');
+                document.getElementById('pomodoro').classList.add('logged-in');
+
+                document.getElementById('user-info').innerHTML = `<b>${n}</b><br>${e}`;
+                document.getElementById('cert-nome').innerText = n.toUpperCase();
+                render();
+            } else {
+                document.getElementById('erro').style.display = 'block';
+            }
+        }
+
+        function render() {
+            const g = document.getElementById('grid'); g.innerHTML = '';
+            aulas.forEach((a, i) => {
+                const done = prog.includes(i);
+                g.innerHTML += `
+                    <div class="card" style="border-color: ${done ? 'var(--primary)' : 'var(--border)'}">
+                        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/${a.id}"></iframe></div>
+                        <div class="card-body">
+                            <h4>${a.t}</h4>
+                            <textarea class="notes-area" oninput="saveN(${i}, this.value)" placeholder="Notas...">${notas[i] || ''}</textarea>
+                            <button class="btn ${done ? 'btn-done' : 'btn-check'}" onclick="check(${i})">${done ? '✓ FINALIZADA' : 'CONCLUIR'}</button>
+                        </div>
+                    </div>`;
+            });
+            update();
+        }
+
+        function saveN(i, v) { notas[i] = v; localStorage.setItem('n_save', JSON.stringify(notas)); }
+        
+        function check(i) {
+            if(prog.includes(i)) prog = prog.filter(x => x !== i); else prog.push(i);
+            localStorage.setItem('p_save', JSON.stringify(prog)); render();
+        }
+
+        function update() {
+            const feito = prog.length;
+            const p = Math.round((feito/15)*100);
+            document.getElementById('bar').style.width = p + '%';
+            document.getElementById('prog-text').innerText = `${feito} / 15`;
+            
+            if(feito === 15) {
+                document.getElementById('cert-area').style.display = 'block';
+                document.getElementById('cert-data').innerText = "Data de Conclusão: " + new Date().toLocaleDateString();
+            } else {
+                document.getElementById('cert-area').style.display = 'none';
+            }
+        }
+
+        function exportar() {
+            let txt = `RELATÓRIO DE ESTUDOS\nALUNO: ${user.nome}\nEMAIL: ${user.email}\n\n`;
+            aulas.forEach((a,i) => { txt += `[${a.t}]\n${notas[i] || "---"}\n\n`; });
+            const blob = new Blob([txt], {type: "text/plain"});
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "meus_estudos.txt"; a.click();
+        }
+
+        let s = 1500;
+        function startT() { setInterval(() => { s--; let m = Math.floor(s/60); let sec = s%60; document.getElementById('timer').innerText = `${m}:${sec<10?'0':''}${sec}`; }, 1000); }
+    </script>
+</body>
+</html>
