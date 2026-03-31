@@ -22,11 +22,19 @@
         body { background-color: #0d1117; color: var(--text); min-height: 100vh; }
 
         /* TELA DE LOGIN - AGORA COM PRIORIDADE MÁXIMA */
-        #auth-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #0d1117; z-index: 10000; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        <div id="auth-screen">
+    <div class="auth-card">
+        <h2 style="color: var(--primary); margin-bottom: 10px;">&lt; DevMaster Pro /&gt;</h2>
+        <p style="color: #8b949e; margin-bottom: 25px; font-size: 14px;">Acesse a plataforma com sua conta do GitHub</p>
+        
+        <button class="btn" id="btn-github" onclick="entrarComGitHub()" style="background: #24292e; color: white; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s;">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" width="22" style="filter: invert(1);">
+            ENTRAR COM GITHUB
+        </button>
+        
+        <p id="login-status" style="color: #8b949e; font-size: 11px; margin-top: 15px; display: none;">Autenticando...</p>
+    </div>
+</div>
         .auth-card {
             <button class="btn" style="background: #24292e; color: white; margin-top: 10px;" onclick="loginGitHub()">
     ENTRAR COM GITHUB
