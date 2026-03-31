@@ -28,6 +28,22 @@
             display: flex; align-items: center; justify-content: center;
         }
         .auth-card {
+            <button class="btn" style="background: #24292e; color: white; margin-top: 10px;" onclick="loginGitHub()">
+    ENTRAR COM GITHUB
+</button>
+
+<script>
+function loginGitHub() {
+    // 1. Substitua o texto abaixo pelo seu Client ID real
+    const clientId = "COLE_AQUI_O_SEU_CLIENT_ID"; 
+    
+    // 2. O link que você pegou no Settings -> Pages
+    const redirectUri = "https://seu-usuario.github.io/seu-repositorio/"; 
+
+    // 3. Isso redireciona o usuário para a página de autorização do GitHub
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user`;
+}
+</script>
             background: #161b22; padding: 40px; border-radius: 16px; 
             border: 2px solid #2ea043; width: 90%; max-width: 400px; text-align: center;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
