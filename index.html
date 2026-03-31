@@ -33,7 +33,19 @@
 </button>
 
 <script>
-function loginGitHub() {
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDy_ZT5F58f3HTolW152aIoAVH0GiLSSOg",
+  authDomain: "meucurso-9c30e.firebaseapp.com",
+  projectId: "meucurso-9c30e",
+  storageBucket: "meucurso-9c30e.firebasestorage.app",
+  messagingSenderId: "763660059002",
+  appId: "1:763660059002:web:67f9e06d5265ff28bb56c3"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+            function loginGitHub() {
     // 1. Substitua o texto abaixo pelo seu Client ID real
     const clientId = "COLE_AQUI_O_SEU_CLIENT_ID"; 
     
